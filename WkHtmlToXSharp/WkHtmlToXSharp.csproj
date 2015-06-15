@@ -113,6 +113,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConverterException.cs" />
+    <Compile Include="IHtmlToImageConverter.cs" />
     <Compile Include="IHtmlToPdfConverter.cs" />
     <Compile Include="EventArgs.cs" />
     <Compile Include="DelegateQueue\AsyncResult.cs" />
@@ -120,7 +121,11 @@
     <Compile Include="DelegateQueue\DelegateQueue.cs" />
     <Compile Include="DelegateQueue\InvokeCompletedEventArgs.cs" />
     <Compile Include="DelegateQueue\PostCompletedEventArgs.cs" />
+    <Compile Include="ImageGlobalSettings.cs" />
+    <Compile Include="ImageNativeCalls.cs" />
     <Compile Include="INativeLibraryBundle.cs" />
+    <Compile Include="MultiplexingImageConverter.cs" />
+    <Compile Include="WkHtmlToImageConverter.cs" />
     <Compile Include="WkHtmlToXLibrariesManager.cs" />
     <Compile Include="LoadErrorHandlingType.cs" />
     <Compile Include="LoadSettings.cs" />

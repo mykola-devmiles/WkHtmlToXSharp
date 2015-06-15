@@ -29,6 +29,7 @@ namespace WkHtmlToXSharp.Tests
 				WkHtmlToXLibrariesManager.Register(new Linux32NativeBundle());
 				WkHtmlToXLibrariesManager.Register(new Linux64NativeBundle());
 				WkHtmlToXLibrariesManager.Register(new Win32NativeBundle());
+                WkHtmlToXLibrariesManager.Register(new Win64NativeBundle());
 			}
 		}
 
@@ -66,6 +67,19 @@ namespace WkHtmlToXSharp.Tests
 			return obj;
 		}
 
+
+		private MultiplexingImageConverter _GetImageConverter()
+		{
+			var obj = new MultiplexingImageConverter();
+			obj.Begin += (s,e) => _Log.DebugFormat("Conversion begin, phase count: {0}", e.Value);
+			//obj.Error += (s, e) => _Log.Error(e.Value);
+			obj.Warning += (s, e) => _Log.Warn(e.Value);
+			//obj.PhaseChanged += (s, e) => _Log.InfoFormat("PhaseChanged: {0} - {1}", e.Value, e.Value2);
+			//obj.ProgressChanged += (s, e) => _Log.InfoFormat("ProgressChanged: {0} - {1}", e.Value, e.Value2);
+			obj.Finished += (s, e) => _Log.InfoFormat("Finished: {0}", e.Value ? "success" : "failed!");
+			return obj;
+		}
+
 		private void _SimpleConversion()
 		{
 			using (var wk = _GetConverter())
@@ -92,6 +106,42 @@ namespace WkHtmlToXSharp.Tests
 				File.WriteAllBytes(@"c:\temp\tmp" + (number) + ".pdf", tmp);
 			}
 		}
+
+		private void _SimpleImageConversion()
+		{
+			using (var wk = _GetImageConverter())
+			{
+				_Log.DebugFormat("Performing to image conversion..");
+
+                wk.GlobalSettings.In = "";
+				wk.GlobalSettings.Out = "";
+				wk.GlobalSettings.Fmt = "jpg";
+				wk.GlobalSettings.ScreenWidth = "1000";
+				wk.GlobalSettings.Quality = "90";
+
+				var tmp = wk.Convert("<div>Hello World!" + Guid.NewGuid() + "</div>");
+
+				Assert.IsNotEmpty(tmp);
+			
+				File.WriteAllBytes(@"c:\\temp\\img" + Guid.NewGuid().ToString() + ".jpg", tmp);
+			}
+		}
+
+		[Test]
+		public void CanConvertFromStringToImage()
+		{
+			_SimpleImageConversion();
+		}
+
+        [Test]
+        public void CanConvertMultipleStringsToImages()
+        {
+            _SimpleImageConversion();
+            _SimpleImageConversion();
+            _SimpleImageConversion();
+            _SimpleImageConversion();
+            _SimpleImageConversion();
+        }
 
 		[Test]
 		public void CanConvertFromFile()

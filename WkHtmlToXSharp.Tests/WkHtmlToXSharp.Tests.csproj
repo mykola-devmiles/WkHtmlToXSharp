@@ -126,6 +126,10 @@
       <Project>{eff2501d-d316-40a9-9362-9f771fb6ca98}</Project>
       <Name>WkHtmlToXSharp.Win32</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WkHtmlToXSharp.Win64\WkHtmlToXSharp.Win64.csproj">
+      <Project>{811c3340-4e30-498b-bc67-8eeab18de477}</Project>
+      <Name>WkHtmlToXSharp.Win64</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WkHtmlToXSharp\WkHtmlToXSharp.csproj">
       <Project>{3DADECBF-6D08-4090-9A1D-2064D0466381}</Project>
       <Name>WkHtmlToXSharp</Name>
@@ -158,6 +162,9 @@
     <None Include="App.config" />
     <None Include="packages.config" />
     <None Include="Resources\page.xhtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
