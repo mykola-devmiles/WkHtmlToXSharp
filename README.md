@@ -1,4 +1,5 @@
 This is a C# wrapper (using P/Invoke) for the excelent Html to PDF conversion library wkhtmltopdf.
+This fork contains methods for html to image conversion that original wrapper was missing.
 
 CURRENT STATUS & LIMITATIONS
 ----------------------------
