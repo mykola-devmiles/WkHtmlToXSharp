@@ -39,44 +39,44 @@ namespace WkHtmlToXSharp
 
 		// Internal 'thread delegate proxy' which handles multiplexing 
 		// of calls  to qk/qt from a single thread.
-		private static readonly DelegateQueue _worker = new DelegateQueue("WkHtmlToPdf");
-		private static WkHtmlToImageConverter _initiWorkAround = null;
+		private static readonly DelegateQueue _worker = new DelegateQueue("WkHtmlToImage");
+        private static WkHtmlToImageConverter _initiWorkAround = null;
 		private WkHtmlToImageConverter _converter = null;
 
 		#region Events
 		public event EventHandler<EventArgs<int>> Begin
 		{
-			add { _converter.Begin += value; }
-			remove { _converter.Begin -= value; }
+            add { _converter.Begin += value; }
+            remove { _converter.Begin -= value; }
 		}
 		public event EventHandler<EventArgs<int, string>> PhaseChanged
 		{
-			add { _converter.PhaseChanged += value; }
-			remove { _converter.PhaseChanged -= value; }
+            add { _converter.PhaseChanged += value; }
+            remove { _converter.PhaseChanged -= value; }
 		}
 		public event EventHandler<EventArgs<int, string>> ProgressChanged
 		{
-			add { _converter.ProgressChanged += value; }
-			remove { _converter.ProgressChanged -= value; }
+            add { _converter.ProgressChanged += value; }
+            remove { _converter.ProgressChanged -= value; }
 		}
 		public event EventHandler<EventArgs<bool>> Finished
 		{
-			add { _converter.Finished += value; }
-			remove { _converter.Finished -= value; }
+            add { _converter.Finished += value; }
+            remove { _converter.Finished -= value; }
 		}
 		public event EventHandler<EventArgs<string>> Error 
 		{
-			add { _converter.Error += value; }
-			remove { _converter.Error -= value; }
+            add { _converter.Error += value; }
+            remove { _converter.Error -= value; }
 		}
 		public event EventHandler<EventArgs<string>> Warning
 		{
-			add { _converter.Warning += value; }
-			remove { _converter.Warning -= value; }
+            add { _converter.Warning += value; }
+            remove { _converter.Warning -= value; }
 		}
 		#endregion
 
-		public ImageGlobalSettings GlobalSettings { get { return _converter.GlobalSettings; } }
+        public ImageGlobalSettings GlobalSettings { get { return _converter.GlobalSettings; } }
 
 
 		public MultiplexingImageConverter()
@@ -91,19 +91,25 @@ namespace WkHtmlToXSharp
 				//		file to be corrupted. So we will keep this converter alive to avoid 
 				//		de-initialization until app's shutdown. (pruiz)
 				// See: http://code.google.com/p/wkhtmltopdf/issues/detail?id=511
-				if (_initiWorkAround == null)
+				if (_converter == null)
 				{
 					_Log.InfoFormat("Initializing converter infrastructure..");
-					_worker.Invoke((Action)(() => _initiWorkAround = new WkHtmlToImageConverter()));
-					_Log.InfoFormat("Initialized converter infrastructure.. (workaround: {0})", _initiWorkAround != null);
+                    _worker.Invoke((Action)(() => _initiWorkAround = new WkHtmlToImageConverter()));
+					_Log.InfoFormat("Initialized converter infrastructure.. (workaround: {0})", _converter != null);
 
-					AppDomain.CurrentDomain.ProcessExit += (o, e) =>
-						_worker.Invoke((Action)(() => {
-							_Log.InfoFormat("Disposing converter infraestructure..");
-							_initiWorkAround.Dispose();
-							_initiWorkAround = null;
-							_Log.InfoFormat("Disposed converter infraestructure..");
-						}));
+                    AppDomain.CurrentDomain.ProcessExit += (o, e) =>
+                        {
+                            if (!_worker.IsDisposed)
+                            {
+                                _worker.Invoke((Action)(() =>
+                                {
+                                    _Log.InfoFormat("Disposing converter infraestructure..");
+                                    _initiWorkAround.Dispose();
+                                    _initiWorkAround = null;
+                                    _Log.InfoFormat("Disposed converter infraestructure..");
+                                }));
+                            }
+                        };
 				}
 			}
 
@@ -112,20 +118,30 @@ namespace WkHtmlToXSharp
 
 		public byte[] Convert()
 		{
-			return (byte[])_worker.Invoke((Func<byte[]>)(() => _converter.Convert()));
+            return (byte[])_worker.Invoke((Func<byte[]>)(() => _converter.Convert()));
 		}
 
 		public byte[] Convert(string inputHtml)
 		{
-			return (byte[])_worker.Invoke((Func<string, byte[]>)((x) => _converter.Convert(x)), inputHtml);
+            return (byte[])_worker.Invoke((Func<string, byte[]>)((x) => _converter.Convert(x)), inputHtml);
 		}
+
+        public static void ShutDown() {
+            _worker.Invoke((Action)(() =>
+            {
+                _Log.InfoFormat("Disposing converter infraestructure..");
+                _initiWorkAround.Dispose();
+                _initiWorkAround = null;
+                _Log.InfoFormat("Disposed converter infraestructure..");
+            }));
+            _worker.Dispose();
+        }
 
 		public void Dispose()
 		{
-			if (_converter != null)
-				_worker.Invoke((Action)(() => _converter.Dispose()));
-
-			_converter = null;
+            if (_converter != null)
+                _worker.Invoke((Action)(() => _converter.Dispose()));
+            _converter = null;
 		}
 
 

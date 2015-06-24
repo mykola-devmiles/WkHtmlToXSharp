@@ -66,6 +66,11 @@ namespace Sanford.Threading
 
         // Inidicates whether the delegate queue has been disposed.
         private volatile bool disposed = false;
+        public bool IsDisposed { 
+            get { 
+                return disposed; 
+            } 
+        }
 
         // Thread ID counter for all DelegateQueues.
         private volatile static uint threadID = 0;
