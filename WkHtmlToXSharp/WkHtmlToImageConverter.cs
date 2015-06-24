@@ -64,7 +64,7 @@ namespace WkHtmlToXSharp
 		public event EventHandler<EventArgs<int>> Begin = delegate { };
 		public event EventHandler<EventArgs<int, string>> PhaseChanged = delegate { };
 		public event EventHandler<EventArgs<int, string>> ProgressChanged = delegate { };
-		public event EventHandler<EventArgs<bool>> Finished = delegate { };
+		public event EventHandler<EventArgs<int>> Finished = delegate { };
 		public event EventHandler<EventArgs<string>> Error = delegate { };
 		public event EventHandler<EventArgs<string>> Warning = delegate { };
 		#endregion
@@ -230,11 +230,11 @@ namespace WkHtmlToXSharp
 				_Log.Error("ProgressChanged event handler failed.", ex);
 			}
 		}
-		private void OnFinished(IntPtr converter, bool success)
+		private void OnFinished(IntPtr converter, int success)
 		{
 			try
 			{
-				Finished(this, new EventArgs<bool>(success));
+				Finished(this, new EventArgs<int>(success));
 			}
 			catch (Exception ex)
 			{
@@ -259,7 +259,7 @@ namespace WkHtmlToXSharp
 			var warnCb = new ImageNativeCalls.wkhtmltoimage_str_callback(OnWarning);
 			var phaseCb = new ImageNativeCalls.wkhtmltoimage_void_callback(OnPhaseChanged);
 			var progressCb = new ImageNativeCalls.wkhtmltoimage_int_callback(OnProgressChanged);
-			var finishCb = new ImageNativeCalls.wkhtmltoimage_bool_callback(OnFinished);
+			var finishCb = new ImageNativeCalls.wkhtmltoimage_int_callback(OnFinished);
 
             try
             {

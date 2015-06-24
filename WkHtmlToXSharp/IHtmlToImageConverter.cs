@@ -34,7 +34,7 @@ namespace WkHtmlToXSharp
 	{
 		event EventHandler<EventArgs<int>> Begin;
 		event EventHandler<EventArgs<string>> Error;
-		event EventHandler<EventArgs<bool>> Finished;
+		event EventHandler<EventArgs<int>> Finished;
 		event EventHandler<EventArgs<int, string>> PhaseChanged;
 		event EventHandler<EventArgs<int, string>> ProgressChanged;
 		event EventHandler<EventArgs<string>> Warning;

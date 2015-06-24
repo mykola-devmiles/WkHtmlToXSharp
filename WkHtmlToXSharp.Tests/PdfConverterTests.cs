@@ -76,7 +76,7 @@ namespace WkHtmlToXSharp.Tests
 			obj.Warning += (s, e) => _Log.Warn(e.Value);
 			//obj.PhaseChanged += (s, e) => _Log.InfoFormat("PhaseChanged: {0} - {1}", e.Value, e.Value2);
 			//obj.ProgressChanged += (s, e) => _Log.InfoFormat("ProgressChanged: {0} - {1}", e.Value, e.Value2);
-			obj.Finished += (s, e) => _Log.InfoFormat("Finished: {0}", e.Value ? "success" : "failed!");
+			obj.Finished += (s, e) => _Log.InfoFormat("Finished status code: {0}", e.Value.ToString());
 			return obj;
 		}
 

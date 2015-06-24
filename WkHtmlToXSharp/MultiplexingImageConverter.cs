@@ -59,7 +59,7 @@ namespace WkHtmlToXSharp
             add { _converter.ProgressChanged += value; }
             remove { _converter.ProgressChanged -= value; }
 		}
-		public event EventHandler<EventArgs<bool>> Finished
+		public event EventHandler<EventArgs<int>> Finished
 		{
             add { _converter.Finished += value; }
             remove { _converter.Finished -= value; }

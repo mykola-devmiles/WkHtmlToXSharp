@@ -135,12 +135,12 @@ namespace WkHtmlToXSharp
 		public static extern int wkhtmltoimage_http_error_code(IntPtr converter);
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		public delegate void wkhtmltoimage_str_callback(IntPtr converter, [MarshalAs(UnmanagedType.LPStr)] string str);
+		public delegate void wkhtmltoimage_str_callback(IntPtr converter, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Marshaler))] string str);
 		//public delegate void wkhtmltoimage_str_callback(IntPtr converter, IntPtr str);
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		public delegate void wkhtmltoimage_int_callback(IntPtr converter, int val);
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		public delegate void wkhtmltoimage_bool_callback(IntPtr converter, bool val);
+		//[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		//public delegate void wkhtmltoimage_bool_callback(IntPtr converter, bool val);
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		public delegate void wkhtmltoimage_void_callback(IntPtr converter);
 
@@ -157,7 +157,7 @@ namespace WkHtmlToXSharp
 		public static extern void wkhtmltoimage_set_progress_changed_callback(IntPtr converter, [MarshalAs(UnmanagedType.FunctionPtr)] wkhtmltoimage_int_callback cb);
 
 		[DllImport(DLL_NAME)]
-		public static extern void wkhtmltoimage_set_finished_callback(IntPtr converter, [MarshalAs(UnmanagedType.FunctionPtr)] wkhtmltoimage_bool_callback cb);
+        public static extern void wkhtmltoimage_set_finished_callback(IntPtr converter, [MarshalAs(UnmanagedType.FunctionPtr)] wkhtmltoimage_int_callback cb);
 		#endregion
 
 		#region wkhtmltoimage Call Wrappers
