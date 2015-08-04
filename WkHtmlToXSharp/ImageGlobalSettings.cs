@@ -47,6 +47,7 @@ namespace WkHtmlToXSharp
 		public string Quiet { get; set; }
 		public string Transparent { get; set;}
 		public CropSettings Crop { get; set;}
+		public LoadSettings LoadPage{get; set;}
 	
 		public ImageGlobalSettings(){
 			Fmt = "";
@@ -57,6 +58,8 @@ namespace WkHtmlToXSharp
 			Crop.Width=0;
 			Crop.Height=0;
 			Quiet = "true";
+			LoadPage = new LoadSettings();
+			LoadPage.ZoomFactor = 1.5;
 		}
 		// TODO: Add as many as you need..
 	}
