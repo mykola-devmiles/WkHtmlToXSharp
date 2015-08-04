@@ -129,10 +129,13 @@ namespace WkHtmlToXSharp
         public static void ShutDown() {
             _worker.Invoke((Action)(() =>
             {
-                _Log.InfoFormat("Disposing converter infraestructure..");
-                _initiWorkAround.Dispose();
-                _initiWorkAround = null;
-                _Log.InfoFormat("Disposed converter infraestructure..");
+                if (_initiWorkAround != null)
+                {
+                    _Log.InfoFormat("Disposing converter infraestructure..");
+                    _initiWorkAround.Dispose();
+                    _initiWorkAround = null;
+                    _Log.InfoFormat("Disposed converter infraestructure..");
+                }
             }));
             _worker.Dispose();
         }
