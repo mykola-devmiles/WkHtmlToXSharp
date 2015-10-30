@@ -113,6 +113,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConverterException.cs" />
+    <Compile Include="HeaderFooter.cs" />
     <Compile Include="IHtmlToImageConverter.cs" />
     <Compile Include="IHtmlToPdfConverter.cs" />
     <Compile Include="EventArgs.cs" />

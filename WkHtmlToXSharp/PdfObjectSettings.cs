@@ -33,8 +33,20 @@ namespace WkHtmlToXSharp
 {
 	public class PdfObjectSettings
 	{
-		private WebSettings _webSettings = new WebSettings();
-		private LoadSettings _loadSettings = new LoadSettings();
+        private WebSettings _webSettings = new WebSettings();
+        private LoadSettings _loadSettings = new LoadSettings();
+        private HeaderFooter _header = new HeaderFooter();
+        private HeaderFooter _footer = new HeaderFooter();
+
+        public HeaderFooter Footer 
+        {
+            get { return _footer; }
+        }
+
+        public HeaderFooter Header 
+        {
+            get { return _header; }
+        }
 
 		public string Page { get; set; }
 

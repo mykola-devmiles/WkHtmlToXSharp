@@ -33,53 +33,53 @@ using Sanford.Threading;
 
 namespace WkHtmlToXSharp
 {
-	public class MultiplexingConverter : IHtmlToPdfConverter
-	{
-		private static readonly global::Common.Logging.ILog _Log = global::Common.Logging.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+    public class MultiplexingConverter : IHtmlToPdfConverter
+    {
+        private static readonly global::Common.Logging.ILog _Log = global::Common.Logging.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-		// Internal 'thread delegate proxy' which handles multiplexing 
-		// of calls  to qk/qt from a single thread.
-		private static readonly DelegateQueue _worker = new DelegateQueue("WkHtmlToPdf");
-		private static WkHtmlToPdfConverter _initiWorkAround = null;
-		private WkHtmlToPdfConverter _converter = null;
+        // Internal 'thread delegate proxy' which handles multiplexing 
+        // of calls  to qk/qt from a single thread.
+        private static readonly DelegateQueue _worker = new DelegateQueue("WkHtmlToPdf");
+        private static WkHtmlToPdfConverter _initiWorkAround = null;
+        private WkHtmlToPdfConverter _converter = null;
 
-		#region Events
-		public event EventHandler<EventArgs<int>> Begin
-		{
-			add { _converter.Begin += value; }
-			remove { _converter.Begin -= value; }
-		}
-		public event EventHandler<EventArgs<int, string>> PhaseChanged
-		{
-			add { _converter.PhaseChanged += value; }
-			remove { _converter.PhaseChanged -= value; }
-		}
-		public event EventHandler<EventArgs<int, string>> ProgressChanged
-		{
-			add { _converter.ProgressChanged += value; }
-			remove { _converter.ProgressChanged -= value; }
-		}
-		public event EventHandler<EventArgs<bool>> Finished
-		{
-			add { _converter.Finished += value; }
-			remove { _converter.Finished -= value; }
-		}
-		public event EventHandler<EventArgs<string>> Error 
-		{
-			add { _converter.Error += value; }
-			remove { _converter.Error -= value; }
-		}
-		public event EventHandler<EventArgs<string>> Warning
-		{
-			add { _converter.Warning += value; }
-			remove { _converter.Warning -= value; }
-		}
-		#endregion
+        #region Events
+        public event EventHandler<EventArgs<int>> Begin
+        {
+            add { _converter.Begin += value; }
+            remove { _converter.Begin -= value; }
+        }
+        public event EventHandler<EventArgs<int, string>> PhaseChanged
+        {
+            add { _converter.PhaseChanged += value; }
+            remove { _converter.PhaseChanged -= value; }
+        }
+        public event EventHandler<EventArgs<int, string>> ProgressChanged
+        {
+            add { _converter.ProgressChanged += value; }
+            remove { _converter.ProgressChanged -= value; }
+        }
+        public event EventHandler<EventArgs<bool>> Finished
+        {
+            add { _converter.Finished += value; }
+            remove { _converter.Finished -= value; }
+        }
+        public event EventHandler<EventArgs<string>> Error
+        {
+            add { _converter.Error += value; }
+            remove { _converter.Error -= value; }
+        }
+        public event EventHandler<EventArgs<string>> Warning
+        {
+            add { _converter.Warning += value; }
+            remove { _converter.Warning -= value; }
+        }
+        #endregion
 
-		public PdfGlobalSettings GlobalSettings { get { return _converter.GlobalSettings; } }
-		public PdfObjectSettings ObjectSettings { get { return _converter.ObjectSettings; } }
+        public PdfGlobalSettings GlobalSettings { get { return _converter.GlobalSettings; } }
+        public PdfObjectSettings ObjectSettings { get { return _converter.ObjectSettings; } }
 
-		public MultiplexingConverter()
+        public MultiplexingConverter()
 		{
 			lock (_worker)
 			{
@@ -98,34 +98,55 @@ namespace WkHtmlToXSharp
 					_Log.InfoFormat("Initialized converter infrastructure.. (workaround: {0})", _initiWorkAround != null);
 
 					AppDomain.CurrentDomain.ProcessExit += (o, e) =>
-						_worker.Invoke((Action)(() => {
-							_Log.InfoFormat("Disposing converter infraestructure..");
-							_initiWorkAround.Dispose();
-							_initiWorkAround = null;
-							_Log.InfoFormat("Disposed converter infraestructure..");
-						}));
+                    {
+                        if (!_worker.IsDisposed)
+                        {
+                            _worker.Invoke((Action)(() =>
+                            {
+                                _Log.InfoFormat("Disposing converter infraestructure..");
+                                _initiWorkAround.Dispose();
+                                _initiWorkAround = null;
+                                _Log.InfoFormat("Disposed converter infraestructure..");
+                            }));
+                        }
+                    };
 				}
 			}
 
 			_worker.Invoke((Action)(() => _converter = new WkHtmlToPdfConverter()));
 		}
 
-		public byte[] Convert()
-		{
-			return (byte[])_worker.Invoke((Func<byte[]>)(() => _converter.Convert()));
-		}
+        public byte[] Convert()
+        {
+            return (byte[])_worker.Invoke((Func<byte[]>)(() => _converter.Convert()));
+        }
 
-		public byte[] Convert(string inputHtml)
-		{
-			return (byte[])_worker.Invoke((Func<string, byte[]>)((x) => _converter.Convert(x)), inputHtml);
-		}
+        public byte[] Convert(string inputHtml)
+        {
+            return (byte[])_worker.Invoke((Func<string, byte[]>)((x) => _converter.Convert(x)), inputHtml);
+        }
 
-		public void Dispose()
-		{
-			if (_converter != null)
-				_worker.Invoke((Action)(() => _converter.Dispose()));
+        public static void ShutDown()
+        {
+            _worker.Invoke((Action)(() =>
+            {
+                if (_initiWorkAround != null)
+                {
+                    _Log.InfoFormat("Disposing converter infraestructure..");
+                    _initiWorkAround.Dispose();
+                    _initiWorkAround = null;
+                    _Log.InfoFormat("Disposed converter infraestructure..");
+                }
+            }));
+            _worker.Dispose();
+        }
 
-			_converter = null;
-		}
-	}
+        public void Dispose()
+        {
+            if (_converter != null)
+                _worker.Invoke((Action)(() => _converter.Dispose()));
+
+            _converter = null;
+        }
+    }
 }
