@@ -31,24 +31,27 @@ using System.Text;
 
 namespace WkHtmlToXSharp
 {
-	public enum PdfOrientation {
-		Portrait,
-		Landscape
-	}
+    public enum PdfOrientation
+    {
+        Portrait,
+        Landscape
+    }
 
-	public class PdfGlobalSettings
-	{
-		private PdfMarginSettings _margins = new PdfMarginSettings();
+    public class PdfGlobalSettings
+    {
+        private PdfMarginSettings _margins = new PdfMarginSettings();
+        private PdfPageSizeSettings _size = new PdfPageSizeSettings();
 
-		public int Dpi { get; set; }
-		public int ImageDpi { get; set; }
-		public int ImageQuality { get; set; }
-		public PdfMarginSettings Margin { get { return _margins; } }
-		public bool Outline { get; set; }
+        public int Dpi { get; set; }
+        public int ImageDpi { get; set; }
+        public int ImageQuality { get; set; }
+        public PdfMarginSettings Margin { get { return _margins; } }
+        public PdfPageSizeSettings Size { get { return _size; } }
+        public bool Outline { get; set; }
 
-		public string Out { get; set; }
-		public PdfOrientation Orientation { get; set; }
+        public string Out { get; set; }
+        public PdfOrientation Orientation { get; set; }
 
-		// TODO: Add as many as you need..
-	}
+        // TODO: Add as many as you need..
+    }
 }

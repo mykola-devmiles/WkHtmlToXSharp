@@ -112,6 +112,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PageSize.cs" />
     <Compile Include="ConverterException.cs" />
     <Compile Include="HeaderFooter.cs" />
     <Compile Include="IHtmlToImageConverter.cs" />
@@ -126,6 +127,7 @@
     <Compile Include="ImageNativeCalls.cs" />
     <Compile Include="INativeLibraryBundle.cs" />
     <Compile Include="MultiplexingImageConverter.cs" />
+    <Compile Include="PdfPageSizeSettings.cs" />
     <Compile Include="WkHtmlToImageConverter.cs" />
     <Compile Include="WkHtmlToXLibrariesManager.cs" />
     <Compile Include="LoadErrorHandlingType.cs" />
